@@ -50,6 +50,9 @@ footer{text-align:center;padding:16px;font-weight:600;text-shadow:0 2px 0 #0003}
 <header><h1><span class="t">True</span> or <span class="f">False</span> <span class="e">Edu</span> 🎉</h1><div class="sub">Berdiri di kiri = BENAR ✅ · Berdiri di kanan = SALAH ❌</div>
 <nav><button id="n1" class="on" onclick="tab(1)">🎮 Main</button><button id="n2" class="s" onclick="tab(2)">📝 Kelola Soal</button></nav></header>
 <main>
+<div id="apicard" class="card hide"><h3>🔌 Sambungkan ke Database</h3>
+ <div class="hint">Tempel URL <b>Web app</b> Apps Script Anda (Deploy → Manage deployments → Web app URL, berakhiran <b>/exec</b>). Pastikan akses deploy: <b>Anyone</b>.</div>
+ <div class="row"><input id="apiu" placeholder="https://script.google.com/macros/s/.../exec"><button class="g" onclick="saveApi()">💾 Simpan &amp; Sambungkan</button></div></div>
 <section id="t1">
  <div id="setup" class="card"><h3>⚙️ Pengaturan Game</h3>
   <div class="grid">
@@ -104,7 +107,9 @@ footer{text-align:center;padding:16px;font-weight:600;text-shadow:0 2px 0 #0003}
 const $=s=>document.querySelector(s),S={cam:false,fin:null,id:0},C=188.5;
 let Q=[],px=null,base=null,raf=0,stream=null;
 // Mode hosting luar (kamera berfungsi): isi dengan URL web app Apps Script (berakhiran /exec)
-const API_URL='https://script.google.com/macros/s/AKfycbwPM4lg5QTaX0psRA5sTaKpVMx2VoX3Oqu-Jkw-cqOA6YnG64y1nWw-w81Hnl2gHJ8/exec';
+let API_URL='https://script.google.com/macros/s/AKfycbwPM4lg5QTaX0psRA5sTaKpVMx2VoX3Oqu-Jkw-cqOA6YnG64y1nWw-w81Hnl2gHJ8/exec';
+try{if(!/^https?:/.test(API_URL))API_URL=localStorage.getItem('tof_api')||API_URL}catch(e){}
+function saveApi(){const u=$('#apiu').value.trim();if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(u))return alert('URL tidak valid. Harus seperti https://script.google.com/macros/s/.../exec');try{localStorage.setItem('tof_api',u)}catch(e){}location.reload()}
 const GAS=!!(window.google&&google.script&&google.script.run);
 const run=(f,...a)=>GAS?new Promise((ok,er)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>er(e))[f](...a)):
  !/^https?:/.test(API_URL)?Promise.reject(new Error('Isi API_URL di index.html dengan URL web app Apps Script (/exec)')):
@@ -115,7 +120,7 @@ function tab(n){$('#t1').classList.toggle('hide',n!=1);$('#t2').classList.toggle
 function opts(sel,arr,all){const v=sel.value;sel.innerHTML=`<option value="">${all}</option>`+arr.map(x=>`<option>${esc(x)}</option>`).join('');sel.value=v}
 async function loadDb(){try{const d=await run('getDbInfo');$('#dbl').textContent=d.name;$('#dbl').href=d.url;$('#dbc').textContent=d.count+' soal'}catch(e){$('#dbl').textContent='gagal memuat'}}
 async function setDb(){const v=$('#dbu').value.trim();if(!v)return alert('Isi URL/ID spreadsheet');if(!confirm('Hubungkan ke spreadsheet ini? Soal akan dibaca dan disimpan di sheet "Soal" pada spreadsheet tersebut.'))return;try{await run('setDbSpreadsheet',v);$('#dbu').value='';await load()}catch(e){alert(e.message||e)}}
-async function load(){loadDb();try{Q=await run('getQuestions')}catch(e){alert('Gagal memuat: '+(e.message||e));return}
+async function load(){if(!GAS&&!/^https?:/.test(API_URL))return;loadDb();try{Q=await run('getQuestions')}catch(e){alert('Gagal memuat: '+(e.message||e));return}
  opts($('#fk'),uniq('kelas'),'Semua Kelas');opts($('#fm'),uniq('mapel'),'Semua Mapel');opts($('#tk'),uniq('kelas'),'Semua Kelas');opts($('#tm2'),uniq('mapel'),'Semua Mapel');
  $('#lk').innerHTML=uniq('kelas').map(x=>`<option>${esc(x)}`).join('');$('#lm').innerHTML=uniq('mapel').map(x=>`<option>${esc(x)}`).join('');tbl()}
 function tbl(){const k=$('#tk').value,m=$('#tm2').value,L=Q.filter(x=>(!k||x.kelas==k)&&(!m||x.mapel==m));$('#cnt').textContent=L.length;
@@ -171,6 +176,6 @@ async function start(){const k=$('#fk').value,m=$('#fm').value;let pool=Q.filter
  $('#game').classList.add('hide');const e=$('#end');e.classList.remove('hide');const b=rev.filter(r=>r.ok).length;
  e.innerHTML=`<h2>🏆 Skor Akhir: ${score}/${pool.length*10}</h2><p>${b>=pool.length*.8?'🌟 Luar biasa!':b>=pool.length*.5?'👍 Bagus, terus belajar!':'💪 Ayo coba lagi!'} Benar ${b} dari ${pool.length} soal.</p>`+
   rev.map(r=>`<p>${r.ok?'✅':'❌'} ${esc(r.q.q)} → <b>${r.q.a}</b>${r.q.ex?'<br><small>💡 '+esc(r.q.ex)+'</small>':''}</p>`).join('')+`<button class="g" onclick="$('#end').classList.add('hide');$('#setup').classList.remove('hide')">🔄 Main Lagi</button>`}
-if(!GAS)$('#dbu').parentElement.classList.add('hide');
+if(!GAS){$('#dbu').parentElement.classList.add('hide');if(!/^https?:/.test(API_URL))$('#apicard').classList.remove('hide')}
 load();
 </script></body></html>
