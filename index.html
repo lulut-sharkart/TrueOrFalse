@@ -104,7 +104,7 @@ footer{text-align:center;padding:16px;font-weight:600;text-shadow:0 2px 0 #0003}
 const $=s=>document.querySelector(s),S={cam:false,fin:null,id:0},C=188.5;
 let Q=[],px=null,base=null,raf=0,stream=null;
 // Mode hosting luar (kamera berfungsi): isi dengan URL web app Apps Script (berakhiran /exec)
-const API_URL='PASTE_URL_WEB_APP_EXEC_DI_SINI';
+const API_URL='https://script.google.com/macros/s/AKfycbwPM4lg5QTaX0psRA5sTaKpVMx2VoX3Oqu-Jkw-cqOA6YnG64y1nWw-w81Hnl2gHJ8/exec';
 const GAS=!!(window.google&&google.script&&google.script.run);
 const run=(f,...a)=>GAS?new Promise((ok,er)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>er(e))[f](...a)):
  !/^https?:/.test(API_URL)?Promise.reject(new Error('Isi API_URL di index.html dengan URL web app Apps Script (/exec)')):
