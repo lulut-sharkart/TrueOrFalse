@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id"><head><base target="_top"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>True or False Edu</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Fredoka,Segoe UI,Arial,sans-serif;color:#fff;min-height:100vh;display:flex;flex-direction:column;background:linear-gradient(120deg,#7c3aed,#ec4899,#f97316,#14b8a6,#3b82f6);background-size:400% 400%;animation:bg 18s ease infinite}
+@keyframes bg{50%{background-position:100% 50%}}
+header{text-align:center;padding:16px 10px 4px}
+h1{margin:0;font-size:2.6rem;text-shadow:0 4px 0 #0004;letter-spacing:1px}
+h1 .t{color:#bbf7d0}h1 .f{color:#fecaca}h1 .e{color:#fde047}
+.sub{opacity:.9;margin:2px 0 10px}
+nav{display:flex;gap:8px;justify-content:center;margin-bottom:10px}
+button,select,input,textarea{font:inherit;border-radius:14px;border:0;padding:10px 14px}
+button{background:linear-gradient(#fde047,#f59e0b);color:#4a1d96;font-weight:700;cursor:pointer;box-shadow:0 4px 0 #b45309;transition:.1s}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 #b45309}
+button.s{background:#ffffff35;color:#fff;box-shadow:0 4px 0 #0003}button.on{background:#fff;color:#7c3aed}
+button.d{background:linear-gradient(#f87171,#dc2626);color:#fff;box-shadow:0 4px 0 #7f1d1d}
+button.g{background:linear-gradient(#4ade80,#16a34a);color:#fff;box-shadow:0 4px 0 #14532d}
+main{flex:1;max-width:1000px;width:100%;margin:auto;padding:0 12px}
+.card{background:#fff;color:#334155;border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:0 8px 0 #0002;border:4px solid #fff}
+.card h3,.card h2{margin:0 0 10px;color:#7c3aed}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label.l{display:block;font-size:.8rem;font-weight:600;color:#7c3aed;margin-bottom:3px}
+select,input,textarea{background:#f1f5f9;color:#111;width:100%;border:2px solid #c4b5fd}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:120px}
+.hide{display:none!important}
+.hint{font-size:.85rem;background:#fef9c3;border-radius:12px;padding:8px 12px;margin:10px 0}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.pill{background:#fff;color:#7c3aed;border-radius:99px;padding:6px 16px;font-weight:700;box-shadow:0 3px 0 #0003}
+#ring{position:relative;width:70px;height:70px;flex:0 0 70px}
+#ring svg{transform:rotate(-90deg)}#ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;text-shadow:0 2px 0 #0005}
+#rc{transition:stroke-dashoffset .1s linear,stroke .3s}
+#q{font-size:1.6rem;font-weight:700;text-align:center;margin:10px 0;background:#fff;color:#4c1d95;border-radius:20px;padding:16px;box-shadow:0 6px 0 #0003;min-height:80px;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;background:#000;border-radius:22px;overflow:hidden;aspect-ratio:4/3;max-height:58vh;margin:auto;border:5px solid #fff;box-shadow:0 8px 0 #0003}
+#vid{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.half{position:absolute;top:0;bottom:0;width:50%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:14px;font-size:2rem;font-weight:700;text-shadow:0 3px 0 #0006}
+#hl{left:0;background:#22c55e66;border-right:3px dashed #fff}#hr{right:0;background:#ef444466}
+.half.act{filter:brightness(1.5);box-shadow:inset 0 0 40px #fff}
+#dot{position:absolute;top:50%;font-size:2.4rem;margin:-20px 0 0 -20px;display:none;transition:left .1s}
+#msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:700;text-align:center;background:#1e1b4bcc;padding:20px;white-space:pre-line}
+#msg.pop{animation:pop .5s}@keyframes pop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+table{width:100%;border-collapse:collapse;font-size:.9rem}th{background:#ede9fe;color:#6d28d9}td,th{padding:7px;text-align:left;border-bottom:1px solid #e2e8f0}
+.ok{color:#16a34a;font-weight:700}.no{color:#dc2626;font-weight:700}
+.chip{background:#ddd6fe;color:#5b21b6;border-radius:99px;padding:2px 10px;font-size:.8rem;font-weight:600}
+footer{text-align:center;padding:16px;font-weight:600;text-shadow:0 2px 0 #0003}
+</style></head><body>
+<header><h1><span class="t">True</span> or <span class="f">False</span> <span class="e">Edu</span> 🎉</h1><div class="sub">Berdiri di kiri = BENAR ✅ · Berdiri di kanan = SALAH ❌</div>
+<nav><button id="n1" class="on" onclick="tab(1)">🎮 Main</button><button id="n2" class="s" onclick="tab(2)">📝 Kelola Soal</button></nav></header>
+<main>
+<section id="t1">
+ <div id="setup" class="card"><h3>⚙️ Pengaturan Game</h3>
+  <div class="grid">
+   <div><label class="l">Kelas</label><select id="fk"></select></div>
+   <div><label class="l">Mapel</label><select id="fm"></select></div>
+   <div><label class="l">Jumlah soal</label><input id="fn" type="number" min="1" value="10"></div>
+   <div><label class="l">⏱ Waktu per soal (detik)</label><input id="fs" type="number" min="3" value="8"></div>
+   <div><label class="l">⏳ Waktu persiapan (detik)</label><input id="fp" type="number" min="0" value="5"></div>
+  </div>
+  <div class="hint">💡 Soal yang punya waktu sendiri memakai waktunya sendiri, selain itu memakai waktu per soal di atas. Tanpa kamera: tombol di layar atau panah ← →.</div>
+  <div class="row"><label style="display:flex;gap:8px;align-items:center;flex:0 0 auto;font-weight:600"><input type="checkbox" id="uc" checked style="width:auto"> 📷 Pakai kamera</label>
+  <button class="s" style="background:#6366f1" onclick="testCam()">🔍 Tes Kamera</button><button class="g" style="font-size:1.2rem" onclick="start()">▶ Mulai Game</button></div>
+  <video id="tv" class="hide" playsinline muted style="width:100%;max-width:320px;border-radius:14px;transform:scaleX(-1);margin-top:8px"></video>
+ </div>
+ <div id="game" class="hide">
+  <div class="hud" style="flex-wrap:wrap"><button class="d" onclick="exitGame()">🚪 Keluar</button><span class="pill" id="info"></span><div id="ring"><svg width="70" height="70"><circle cx="35" cy="35" r="30" stroke="#ffffff55" stroke-width="8" fill="#4c1d95"/><circle id="rc" cx="35" cy="35" r="30" stroke="#fde047" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="0"/></svg><b id="tm"></b></div><span class="pill" id="sc">⭐ 0</span></div>
+  <div id="q"></div>
+  <div id="stage"><video id="vid" playsinline muted></video><div class="half" id="hl">✅<span>BENAR</span></div><div class="half" id="hr">❌<span>SALAH</span></div><div id="dot">🧍</div><div id="msg" class="hide"></div></div>
+  <div class="row" style="margin-top:12px"><button class="g" style="font-size:1.2rem" onclick="S.fin&&S.fin('BENAR')">✅ BENAR</button><button class="d" style="font-size:1.2rem" onclick="S.fin&&S.fin('SALAH')">❌ SALAH</button></div>
+ </div>
+ <div id="end" class="card hide"></div>
+ <canvas id="cv" width="80" height="60" class="hide"></canvas>
+</section>
+
+<section id="t2" class="hide">
+ <div class="card"><h3>🗄️ Database Spreadsheet</h3>
+  <p style="margin:0 0 8px">Semua soal (manual maupun import) otomatis tersimpan di sheet <b>Soal</b> pada spreadsheet: <a id="dbl" href="#" target="_blank" style="color:#7c3aed;font-weight:700">memuat…</a> · <span class="chip" id="dbc">0 soal</span></p>
+  <div class="row"><input id="dbu" placeholder="(Opsional) pakai spreadsheet sendiri: URL / ID"><button onclick="setDb()">🔗 Hubungkan</button></div>
+ </div>
+ <div class="card"><h3>➕ Tambah / Edit Soal</h3>
+  <input type="hidden" id="eid">
+  <div class="grid"><div><label class="l">Kelas</label><input id="ek" placeholder="mis. 5" list="lk"></div><div><label class="l">Mapel</label><input id="em" placeholder="mis. IPA" list="lm"></div>
+  <div><label class="l">Jawaban</label><select id="ea"><option>BENAR</option><option>SALAH</option></select></div>
+  <div><label class="l">⏱ Waktu soal (detik, opsional)</label><input id="et" type="number" min="3" placeholder="default"></div></div>
+  <datalist id="lk"></datalist><datalist id="lm"></datalist>
+  <label class="l" style="margin-top:8px">Pernyataan soal</label><textarea id="eq" rows="2"></textarea>
+  <label class="l" style="margin-top:8px">Penjelasan (opsional)</label><input id="ex">
+  <div class="row" style="margin-top:10px"><button class="g" onclick="save()">💾 Simpan</button><button class="s" onclick="clr()">Reset</button></div>
+ </div>
+ <div class="card"><h3>📥 Import dari File / Spreadsheet</h3>
+  <div class="hint">Kolom: <b>kelas, mapel, pertanyaan, jawaban (benar/salah), penjelasan, waktu</b>. Kolom kelas/mapel yang kosong memakai default di bawah.</div>
+  <div class="row"><input id="dk" placeholder="Default kelas"><input id="dm" placeholder="Default mapel"></div>
+  <div class="row" style="margin-top:8px"><input type="file" id="fl" accept=".xlsx,.xls,.csv"><button onclick="impFile()">📂 Import File</button></div>
+  <div class="row" style="margin-top:8px"><input id="su" placeholder="URL / ID Google Spreadsheet"><input id="st" placeholder="Nama sheet (opsional)"><button onclick="impSS()">📊 Import Spreadsheet</button></div>
+ </div>
+ <div class="card"><div class="row"><h3 style="margin:0;flex:2">📚 Daftar Soal (<span id="cnt">0</span>)</h3><select id="tk" onchange="tbl()"></select><select id="tm2" onchange="tbl()"></select></div>
+  <div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>Kelas</th><th>Mapel</th><th>Soal</th><th>Jwb</th><th>⏱</th><th></th></tr></thead><tbody id="tb"></tbody></table></div></div>
+</section>
+</main>
+<footer>🦈 True or False Edu · Developer: <b>SharkArt.Evo Education LTD</b></footer>
+<script>
+const $=s=>document.querySelector(s),S={cam:false,fin:null,id:0},C=188.5;
+let Q=[],px=null,base=null,raf=0,stream=null;
+// Mode hosting luar (kamera berfungsi): isi dengan URL web app Apps Script (berakhiran /exec)
+const API_URL='PASTE_URL_WEB_APP_EXEC_DI_SINI';
+const GAS=!!(window.google&&google.script&&google.script.run);
+const run=(f,...a)=>GAS?new Promise((ok,er)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>er(e))[f](...a)):
+ !/^https?:/.test(API_URL)?Promise.reject(new Error('Isi API_URL di index.html dengan URL web app Apps Script (/exec)')):
+ fetch(API_URL,{method:'POST',redirect:'follow',body:JSON.stringify({fn:f,args:a})}).then(r=>r.json()).then(j=>{if(j.error)throw new Error(j.error);return j.data});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uniq=k=>[...new Set(Q.map(x=>x[k]))].sort((a,b)=>a.localeCompare(b,'id',{numeric:true}));
+function tab(n){$('#t1').classList.toggle('hide',n!=1);$('#t2').classList.toggle('hide',n!=2);$('#n1').className=n==1?'on':'s';$('#n2').className=n==2?'on':'s'}
+function opts(sel,arr,all){const v=sel.value;sel.innerHTML=`<option value="">${all}</option>`+arr.map(x=>`<option>${esc(x)}</option>`).join('');sel.value=v}
+async function loadDb(){try{const d=await run('getDbInfo');$('#dbl').textContent=d.name;$('#dbl').href=d.url;$('#dbc').textContent=d.count+' soal'}catch(e){$('#dbl').textContent='gagal memuat'}}
+async function setDb(){const v=$('#dbu').value.trim();if(!v)return alert('Isi URL/ID spreadsheet');if(!confirm('Hubungkan ke spreadsheet ini? Soal akan dibaca dan disimpan di sheet "Soal" pada spreadsheet tersebut.'))return;try{await run('setDbSpreadsheet',v);$('#dbu').value='';await load()}catch(e){alert(e.message||e)}}
+async function load(){loadDb();try{Q=await run('getQuestions')}catch(e){alert('Gagal memuat: '+(e.message||e));return}
+ opts($('#fk'),uniq('kelas'),'Semua Kelas');opts($('#fm'),uniq('mapel'),'Semua Mapel');opts($('#tk'),uniq('kelas'),'Semua Kelas');opts($('#tm2'),uniq('mapel'),'Semua Mapel');
+ $('#lk').innerHTML=uniq('kelas').map(x=>`<option>${esc(x)}`).join('');$('#lm').innerHTML=uniq('mapel').map(x=>`<option>${esc(x)}`).join('');tbl()}
+function tbl(){const k=$('#tk').value,m=$('#tm2').value,L=Q.filter(x=>(!k||x.kelas==k)&&(!m||x.mapel==m));$('#cnt').textContent=L.length;
+ $('#tb').innerHTML=L.map(x=>`<tr><td><span class="chip">${esc(x.kelas)}</span></td><td>${esc(x.mapel)}</td><td>${esc(x.q)}</td><td class="${x.a=='BENAR'?'ok':'no'}">${x.a}</td><td>${x.t||'-'}</td><td style="white-space:nowrap"><button class="s" style="background:#ddd6fe;color:#5b21b6" onclick="edit('${x.id}')">✏️</button> <button class="d" onclick="del('${x.id}')">🗑</button></td></tr>`).join('')}
+function edit(id){const x=Q.find(i=>i.id==id);$('#eid').value=id;$('#ek').value=x.kelas;$('#em').value=x.mapel;$('#eq').value=x.q;$('#ea').value=x.a;$('#ex').value=x.ex||'';$('#et').value=x.t||'';scrollTo(0,0)}
+function clr(){['eid','ek','em','eq','ex','et'].forEach(i=>$('#'+i).value='')}
+async function save(){try{await run('saveQuestion',{id:$('#eid').value,kelas:$('#ek').value.trim(),mapel:$('#em').value.trim(),q:$('#eq').value.trim(),a:$('#ea').value,ex:$('#ex').value.trim(),t:$('#et').value});clr();await load()}catch(e){alert(e.message||e)}}
+async function del(id){if(!confirm('Hapus soal ini?'))return;await run('deleteQuestion',id);load()}
+async function impFile(){const f=$('#fl').files[0];if(!f)return alert('Pilih file dulu');
+ const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+ try{const r=await run('importRows',rows,$('#dk').value.trim(),$('#dm').value.trim());alert(`Ditambahkan: ${r.added}, dilewati: ${r.skipped}`);load()}catch(e){alert(e.message||e)}}
+async function impSS(){try{const r=await run('importFromSheetUrl',$('#su').value.trim(),$('#st').value.trim(),$('#dk').value.trim(),$('#dm').value.trim());alert(`Ditambahkan: ${r.added}, dilewati: ${r.skipped}`);load()}catch(e){alert(e.message||e)}}
+
+// ===== Kamera =====
+async function startCam(v){v=v||$('#vid');if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw{name:'NoAPI'};
+ let last;for(const c of [{video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}},{video:true}]){try{stream=await navigator.mediaDevices.getUserMedia(c);break}catch(e){last=e;if(e.name=='NotAllowedError'||e.name=='NotFoundError'||e.name=='SecurityError')break}}
+ if(!stream)throw last;v.muted=true;v.setAttribute('playsinline','');v.srcObject=stream;await v.play()}
+function camErr(e){const n=e&&e.name,m={NotAllowedError:'Izin kamera ditolak/diblokir. Klik ikon kamera/gembok di address bar → Izinkan, lalu muat ulang halaman. Jika dibuka dari aplikasi (WhatsApp/Instagram/Google Sites), buka lewat Chrome/Safari biasa. Jika dibuka dari link Apps Script (script.google.com), Google memang memblokir kamera: pasang index.html di hosting statis (Netlify/GitHub Pages) dan sambungkan lewat API_URL.',NotFoundError:'Kamera tidak ditemukan di perangkat ini.',NotReadableError:'Kamera sedang dipakai aplikasi lain (Zoom/Meet/dll). Tutup aplikasinya lalu coba lagi.',NoAPI:'Browser ini tidak mendukung kamera, atau halaman tidak aman (harus https).',SecurityError:'Kamera diblokir oleh kebijakan keamanan halaman. Pasang index.html di hosting statis (Netlify/GitHub Pages) dan sambungkan lewat API_URL.'};return(m[n]||'Kamera gagal dibuka.')+(n?' ['+n+']':'')}
+function stopCam(){cancelAnimationFrame(raf);S.cam=false;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('#vid').srcObject=null;$('#tv').srcObject=null;$('#tv').classList.add('hide')}
+async function testCam(){const v=$('#tv');if(stream){stopCam();return}try{await startCam(v);v.classList.remove('hide')}catch(e){stopCam();alert('⚠️ '+camErr(e))}}
+async function openTab(){try{const u=await run('getAppUrl');if(!window.open(u,'_blank'))prompt('Salin & buka URL ini di tab baru:',u)}catch(e){alert(e.message||e)}}
+function stopAll(){S.id++;stopCam();if(S.fin)S.fin(null);msg('');$('#game').classList.add('hide');$('#end').classList.add('hide');$('#setup').classList.remove('hide')}
+function exitGame(){if(confirm('Keluar dari game? Skor tidak disimpan.'))stopAll()}
+function frame(){const c=$('#cv'),x=c.getContext('2d',{willReadFrequently:true});x.save();x.translate(80,0);x.scale(-1,1);x.drawImage($('#vid'),0,0,80,60);x.restore();return x.getImageData(0,0,80,60).data}
+function track(){if(!S.cam)return;const d=frame();if(base){let n=0,sx=0;for(let i=0;i<d.length;i+=4){const df=Math.abs(d[i]-base[i])+Math.abs(d[i+1]-base[i+1])+Math.abs(d[i+2]-base[i+2]);if(df>90){n++;sx+=(i/4)%80}}
+ if(n>120){const cx=sx/n/80;px=px==null?cx:px*.6+cx*.4;$('#dot').style.display='block';$('#dot').style.left=px*100+'%';$('#hl').classList.toggle('act',px<.5);$('#hr').classList.toggle('act',px>=.5)}else{px=null;$('#dot').style.display='none';$('#hl').classList.remove('act');$('#hr').classList.remove('act')}}
+ raf=requestAnimationFrame(track)}
+const msg=(t,pop)=>{const m=$('#msg');m.textContent=t||'';m.classList.toggle('hide',!t);if(pop){m.classList.remove('pop');void m.offsetWidth;m.classList.add('pop')}};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function countdown(txt,n){const id=S.id;for(let i=n;i>0&&S.id==id;i--){msg(txt+'\n'+i,1);setT(i,n);await wait(1000)}}
+function setT(t,max){$('#tm').textContent=Math.ceil(Math.max(t,0));$('#rc').style.strokeDashoffset=C*(1-Math.max(t,0)/max);$('#rc').style.stroke=t<=3?'#f87171':'#fde047'}
+
+// ===== Game =====
+function ask(q){const sec=q.t||S.sec;return new Promise(res=>{let t=sec;$('#q').textContent=q.q;setT(t,sec);
+ const fin=a=>{if(!S.fin)return;S.fin=null;clearInterval(iv);document.removeEventListener('keydown',kd);res(a)};
+ const kd=e=>{if(e.key=='ArrowLeft')fin('BENAR');if(e.key=='ArrowRight')fin('SALAH')};
+ const iv=setInterval(()=>{t-=.1;setT(t,sec);if(t<=0)fin(S.cam?(px==null?null:px<.5?'BENAR':'SALAH'):null)},100);
+ S.fin=fin;document.addEventListener('keydown',kd)})}
+async function start(){const k=$('#fk').value,m=$('#fm').value;let pool=Q.filter(x=>(!k||x.kelas==k)&&(!m||x.mapel==m));
+ if(!pool.length)return alert('Belum ada soal untuk pilihan ini. Tambahkan di menu Kelola Soal.');
+ pool.sort(()=>Math.random()-.5);pool=pool.slice(0,Math.max(1,+$('#fn').value||10));S.sec=Math.max(3,+$('#fs').value||8);
+ stopCam();const id=++S.id,prep=Math.max(0,+$('#fp').value||0),uc=$('#uc').checked;
+ base=null;px=null;$('#setup').classList.add('hide');$('#end').classList.add('hide');$('#game').classList.remove('hide');
+ $('#hl').classList.toggle('hide',!uc);$('#hr').classList.toggle('hide',!uc);$('#q').textContent='Bersiap-siap! 🚀';$('#info').textContent='Siap?';$('#sc').textContent='⭐ 0';
+ if(uc){try{await startCam();if(S.id!=id)return stopCam();S.cam=true;await countdown('🙈 Keluar dari kamera…',3);base=new Uint8ClampedArray(frame());track();await countdown('🧍 Masuk ke kamera!',3)}
+  catch(e){stopCam();if(!confirm('⚠️ '+camErr(e)+'\n\nLanjut main tanpa kamera (pakai tombol/panah)?\nBatal = kembali ke menu.'))return stopAll();$('#hl').classList.add('hide');$('#hr').classList.add('hide')}}
+ if(S.id!=id)return;if(prep>0)await countdown('⏳ Game dimulai dalam',prep);if(S.id!=id)return;msg('🎮 MULAI!',1);await wait(700);if(S.id!=id)return;msg('');
+ let score=0,rev=[];
+ for(let i=0;i<pool.length;i++){const q=pool[i];$('#info').textContent=`Soal ${i+1}/${pool.length} · ${q.mapel} · Kls ${q.kelas}`;
+  const a=await ask(q);if(S.id!=id)return;const ok=a==q.a;if(ok)score+=10;$('#sc').textContent='⭐ '+score;
+  msg((ok?'🎉 Benar!':a?'😢 Salah!':'⌛ Waktu habis!')+'\nJawaban: '+q.a+(q.ex?'\n💡 '+q.ex:''),1);rev.push({q,a,ok});await wait(q.ex?2800:1800);if(S.id!=id)return;msg('')}
+ stopCam();
+ $('#game').classList.add('hide');const e=$('#end');e.classList.remove('hide');const b=rev.filter(r=>r.ok).length;
+ e.innerHTML=`<h2>🏆 Skor Akhir: ${score}/${pool.length*10}</h2><p>${b>=pool.length*.8?'🌟 Luar biasa!':b>=pool.length*.5?'👍 Bagus, terus belajar!':'💪 Ayo coba lagi!'} Benar ${b} dari ${pool.length} soal.</p>`+
+  rev.map(r=>`<p>${r.ok?'✅':'❌'} ${esc(r.q.q)} → <b>${r.q.a}</b>${r.q.ex?'<br><small>💡 '+esc(r.q.ex)+'</small>':''}</p>`).join('')+`<button class="g" onclick="$('#end').classList.add('hide');$('#setup').classList.remove('hide')">🔄 Main Lagi</button>`}
+if(!GAS)$('#dbu').parentElement.classList.add('hide');
+load();
+</script></body></html>
